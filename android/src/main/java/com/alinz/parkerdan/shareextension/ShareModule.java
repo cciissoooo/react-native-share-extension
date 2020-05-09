@@ -4,6 +4,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
 
@@ -13,12 +14,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 
-import android.graphics.Bitmap;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 
-import java.io.InputStream;
+import java.util.List;
 
 
 public class ShareModule extends ReactContextBaseJavaModule {
@@ -44,53 +44,54 @@ public class ShareModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void data(Promise promise) {
         try {
-            WritableMap result = processIntent();
-            promise.resolve(result);
+            promise.resolve(processIntent());
         } catch (Exception ex) {
-            String message = ex.getMessage();
-            promise.reject("Error", message);
+            promise.reject("Error", ex.getMessage());
         }
     }
 
-    public WritableMap processIntent() throws Exception {
-        WritableMap map = Arguments.createMap();
-
-        String value = "";
-        String type = "";
-        int size = 0;
+    private WritableArray processIntent() throws Exception {
+        WritableArray array = Arguments.createArray();
 
         Activity currentActivity = getCurrentActivity();
-
-        if (currentActivity != null) {
-            Intent intent = currentActivity.getIntent();
-            String action = intent.getAction();
-            type = intent.getType();
-
-            if (Intent.ACTION_SEND.equals(action)) {
-                Uri uri;
-                if ("text/plain".equals(type)) {
-                    value = intent.getStringExtra(Intent.EXTRA_TEXT);
-                    if (!value.startsWith("content://") || !value.startsWith("file://")) {
-                        throw new Exception("Invalid Intent Text: " + value);
-                    }
-
-                    uri = Uri.parse(value);
-                } else {
-                    uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-//                      value = "file://" + RealPathUtil.getRealPathFromURI(currentActivity, uri);
-                }
-                return getMetadata(uri);
-            } else {
-                throw new Exception("Invalid Intent Action: " + action);
-            }
+        if (currentActivity == null) {
+            throw new Exception("Activity doesn't exist");
         }
 
-        // return default values
-        map.putString(FIELD_TYPE, type);
-        map.putString(FIELD_VALUE, value);
-        map.putInt(FIELD_SIZE, size);
-        map.putString(FIELD_NAME, value);
-        return map;
+        Intent intent = currentActivity.getIntent();
+        String action = intent.getAction();
+
+        if (Intent.ACTION_SEND.equals(action)) {
+            String type = intent.getType();
+            Uri uri;
+
+            if ("text/plain".equals(type)) {
+                uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                if (uri == null) {
+                    String value = intent.getStringExtra(Intent.EXTRA_TEXT);
+                    if (value.startsWith("content://") || value.startsWith("file://")) {
+                        uri = Uri.parse(value);
+                    } else {
+                        throw new Exception("Sharing simple text is not supported: " + value);
+                    }
+                }
+            } else {
+                uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            }
+
+            WritableMap metadata = getMetadata(uri);
+            array.pushMap(metadata);
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+            List<Uri> uris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            for (Uri uri : uris) {
+                WritableMap metadata = getMetadata(uri);
+                array.pushMap(metadata);
+            }
+        } else {
+            throw new Exception("Invalid intent action: " + action);
+        }
+
+        return array;
     }
 
     // Copied from io/github/elyx0/reactnativedocumentpicker/DocumentPickerModule.java

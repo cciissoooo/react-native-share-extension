@@ -5,22 +5,28 @@ This fork includes some changes to the [original alinz/react-native-share-extens
 1. Added a .podspec file in the root of the project. Use by adding this to your Podfile: `pod 'ReactNativeShareExtension', :podspec => '../node_modules/react-native-share-extension/ReactNativeShareExtension.podspec'`
 
 ## Android changes:
-1. Support share all file types in `data()` function, return file `type`, `value`, `size` and `name` .
+1. Support sharing all file types.
+2. Get file `type`, `uri`, `size` and `name`.
+2. Support sharing multiple files
     ```js
     import ShareExtension from 'react-native-share-extension'
     ...
 
-    const { type, value, size, name } = await ShareExtension.data()
+    const result = await ShareExtension.data();
+    
+    result.forEach((res) => {
+        const { type, value, size, name } = res;
+    })
     ```
-2. Handle errors and return error messages.
-    ```
-        try {
+3. Handle errors and return error messages.
+    ```js
+    try {
         const result = await ShareExtension.data();
         ...
 
-        } catch (e) {
+    } catch (e) {
         ShareExtension.close();
-        }
+    }
     ```
 
 ## Troubleshooting on iOS:

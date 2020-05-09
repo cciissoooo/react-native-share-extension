@@ -1,3 +1,5 @@
+Support more file types on Android
+
 # React Native Share Extension
 
 This is a helper module which brings react native as an engine to drive share extension for your app.

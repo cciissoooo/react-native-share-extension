@@ -70,7 +70,7 @@ public class ShareModule extends ReactContextBaseJavaModule {
                 Uri uri;
                 if ("text/plain".equals(type)) {
                     value = intent.getStringExtra(Intent.EXTRA_TEXT);
-                    if (!value.startsWith("content://") or !value.startsWith("file://")) {
+                    if (!value.startsWith("content://") || !value.startsWith("file://")) {
                         throw new Exception("Invalid Intent Text: " + value);
                     }
 
@@ -81,7 +81,7 @@ public class ShareModule extends ReactContextBaseJavaModule {
                 }
                 return getMetadata(uri);
             } else {
-                throw new Exception("Invalid Intent Action: " + action)
+                throw new Exception("Invalid Intent Action: " + action);
             }
         }
 

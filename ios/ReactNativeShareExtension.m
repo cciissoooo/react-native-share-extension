@@ -74,32 +74,30 @@ RCT_REMAP_METHOD(data,
         NSUInteger totalItems = [attachments count];
         
         [attachments enumerateObjectsUsingBlock:^(NSItemProvider *provider, NSUInteger idx, BOOL *stop) {
-            BOOL isLast = idx == totalItems - 1;
-            
             // TODO add more file types
             if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeImage]) {
                  [provider loadItemForTypeIdentifier:(NSString *)kUTTypeImage options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                     [self processItem:item error:error results:results shouldInvokeCallback:isLast withCallback:callback];
+                     [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
                  }];
             } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeMovie]) {
                 [provider loadItemForTypeIdentifier:(NSString *)kUTTypeMovie options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                    [self processItem:item error:error results:results shouldInvokeCallback:isLast withCallback:callback];
+                    [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
                 }];
             } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeVideo]) {
                 [provider loadItemForTypeIdentifier:(NSString *)kUTTypeVideo options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                    [self processItem:item error:error results:results shouldInvokeCallback:isLast withCallback:callback];
+                    [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
                 }];
             } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeAudio]) {
                 [provider loadItemForTypeIdentifier:(NSString *)kUTTypeAudio options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                    [self processItem:item error:error results:results shouldInvokeCallback:isLast withCallback:callback];
+                    [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
                 }];
             } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeText]) {
                 [provider loadItemForTypeIdentifier:(NSString *)kUTTypeText options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                    [self processItem:item error:error results:results shouldInvokeCallback:isLast withCallback:callback];
+                    [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
                 }];
             } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypePDF]) {
                 [provider loadItemForTypeIdentifier:(NSString *)kUTTypePDF options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                    [self processItem:item error:error results:results shouldInvokeCallback:isLast withCallback:callback];
+                    [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
                 }];
             } else {
                 callback(nil, [NSException exceptionWithName:@"Error" reason:@"Couldn't find provider" userInfo:nil]);
@@ -116,7 +114,7 @@ RCT_REMAP_METHOD(data,
 - (void)processItem:(id<NSSecureCoding>) item
                 error:(NSError *)error
                 results:(NSMutableArray *)results
-                shouldInvokeCallback:(BOOL) shouldInvokeCallback
+                totalItems:(NSUInteger) totalItems
                 withCallback:(void(^)(NSMutableArray* metadataArray, NSException *exception))callback  {
     if (error) {
        callback(nil, [NSException exceptionWithName:@"loadItemForTypeIdentifier Error" reason:error.description userInfo:nil]);
@@ -126,7 +124,8 @@ RCT_REMAP_METHOD(data,
     NSMutableDictionary* result = [self getMetadataForUrl:url error:&error];
     if (result) {
         [results addObject:result];
-        if (shouldInvokeCallback) {
+        
+        if ([results count] == totalItems) {
             callback(results, nil);
         }
     } else {
@@ -180,3 +179,4 @@ RCT_REMAP_METHOD(data,
 }
 
 @end
+

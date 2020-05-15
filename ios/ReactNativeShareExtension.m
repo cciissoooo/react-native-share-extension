@@ -74,29 +74,10 @@ RCT_REMAP_METHOD(data,
         NSUInteger totalItems = [attachments count];
         
         [attachments enumerateObjectsUsingBlock:^(NSItemProvider *provider, NSUInteger idx, BOOL *stop) {
-            // TODO add more file types
-            if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeImage]) {
-                 [provider loadItemForTypeIdentifier:(NSString *)kUTTypeImage options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                     [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
-                 }];
-            } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeMovie]) {
-                [provider loadItemForTypeIdentifier:(NSString *)kUTTypeMovie options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                    [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
-                }];
-            } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeVideo]) {
-                [provider loadItemForTypeIdentifier:(NSString *)kUTTypeVideo options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                    [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
-                }];
-            } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeAudio]) {
-                [provider loadItemForTypeIdentifier:(NSString *)kUTTypeAudio options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                    [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
-                }];
-            } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeText]) {
-                [provider loadItemForTypeIdentifier:(NSString *)kUTTypeText options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
-                    [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
-                }];
-            } else if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypePDF]) {
-                [provider loadItemForTypeIdentifier:(NSString *)kUTTypePDF options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
+            // load for all file types
+            // kUTTypeData is the base type for any sort of simple byte stream, including files and in-memory data
+            if ([provider hasItemConformingToTypeIdentifier:(NSString *)kUTTypeData]) {
+                [provider loadItemForTypeIdentifier:(NSString *)kUTTypeData options:nil completionHandler:^(id<NSSecureCoding> item, NSError *error) {
                     [self processItem:item error:error results:results totalItems:totalItems withCallback:callback];
                 }];
             } else {

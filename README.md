@@ -24,15 +24,10 @@ This fork includes some changes to the [original alinz/react-native-share-extens
         ShareExtension.close();
     }
     ```
+4. Support sharing all file types.
 
 ## iOS changes:
 1. Added a .podspec file in the root of the project. Use by adding this to your Podfile: `pod 'ReactNativeShareExtension', :podspec => '../node_modules/react-native-share-extension/ReactNativeShareExtension.podspec'`
-2. Support file types:
-    image, video, audio, pdf, txt
-
-## Android changes:
-1. Support sharing all file types.
-
 
 ## Troubleshooting on iOS:
 1. Error compiling with Xcode: "'React/RCTBridgeModule.h' file not found"

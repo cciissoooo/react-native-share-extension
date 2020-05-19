@@ -11,7 +11,7 @@ This fork includes some changes to the [original alinz/react-native-share-extens
     const result = await ShareExtension.data();
     
     result.forEach((res) => {
-        const { type, value, size, name } = res;
+        const { type, uri, size, name } = res;
     })
     ```
 3. Handle errors and return error messages.

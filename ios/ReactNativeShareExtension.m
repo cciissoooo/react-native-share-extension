@@ -2,7 +2,7 @@
 #import "React/RCTRootView.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 
-static NSString *const FIELD_URI = @"value"; // uri
+static NSString *const FIELD_URI = @"uri";
 static NSString *const FIELD_NAME = @"name";
 static NSString *const FIELD_TYPE = @"type";
 static NSString *const FIELD_SIZE = @"size";

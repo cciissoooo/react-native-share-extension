@@ -22,7 +22,7 @@ import java.util.List;
 
 
 public class ShareModule extends ReactContextBaseJavaModule {
-    private static final String FIELD_VALUE = "value"; // uri
+    private static final String FIELD_VALUE = "uri";
     private static final String FIELD_NAME = "name";
     private static final String FIELD_TYPE = "type";
     private static final String FIELD_SIZE = "size";
